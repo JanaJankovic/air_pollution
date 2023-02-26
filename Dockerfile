@@ -1,15 +1,11 @@
-FROM python:3.11-alpine
-
-RUN apk add --no-cache g++ gcc libxslt-dev libxml2-dev libffi-dev openssl-dev make
-
-COPY pyproject.toml poetry.lock ./
-
-RUN pip install poetry
-
-RUN poetry install
-
-COPY . .
+FROM python:3.11
 
 WORKDIR /app
 
+COPY . .
+
+RUN pip install -r requirements.txt
+
 CMD python ./src/serve/server.py
+
+EXPOSE 5000
