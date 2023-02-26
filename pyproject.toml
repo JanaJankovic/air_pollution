@@ -7,12 +7,7 @@ readme = "README.md"
 packages = [{include = "air_pollution"}]
 
 [tool.poetry.dependencies]
-python = "^3.11"
-numpy = "^1.24.2"
-pandas = "^1.5.3"
-flask = "^2.2.3"
-scikit-learn = "^1.2.1"
-pytest = "^7.2.1"
+python = ">=3.8,<3.12"
 
 
 [build-system]
