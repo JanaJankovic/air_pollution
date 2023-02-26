@@ -12,8 +12,11 @@ def predict_model(data_path, model_path, train_metrics_path, metrics_path):
     df = pd.DataFrame(csv)
     print('Data read')
 
-    x_train, x_test, y_train, y_test = train_test_split(df[np.array(
-        df.columns)[1:]], df['pm10'], test_size=0.3, random_state=1234, shuffle=True)
+    columns = np.array(df.columns)
+    mask = columns != 'pm10'
+
+    x_train, x_test, y_train, y_test = train_test_split(
+        df[columns[mask]], df['pm10'], test_size=0.3, random_state=1234, shuffle=True)
     model = LinearRegression()
     model.fit(x_train, y_train)
     print('Model trained')
