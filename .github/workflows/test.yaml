@@ -20,5 +20,8 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Run server
+        run: py ./src/serve/server.py
+
       - name: Run tests
         run: pytest
