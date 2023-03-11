@@ -23,8 +23,7 @@ def reorder(data):
 @app.route('/air/predict/', methods=['POST'])
 def predict():
     object_json = request.json
-    raw = json.load(object_json)
-    df = reorder(raw)
+    df = reorder(object_json)
 
     root_dir = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../..'))
@@ -34,7 +33,11 @@ def predict():
     model = pickle.load(f)
 
     predictions = model.forecast(df.values, steps=72)
-    return jsonify({'predictions': predictions})
+    predictions = pd.DataFrame(
+        predictions, columns=df.columns, index=df.index)
+    json_data = predictions.to_json(orient='records')
+
+    return json_data
 
 
 if __name__ == '__main__':
