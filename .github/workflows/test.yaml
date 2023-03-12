@@ -54,9 +54,9 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "janajankovic@users.noreply.github.com"
 
-      - name: commit
+      - name: Commit changes
         run: |
-          git .
+          git add .
           git commit -m "GitHub Actions Bot Commit Changes"
           git push origin main
 
