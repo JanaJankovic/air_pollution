@@ -27,7 +27,7 @@ jobs:
         run: python ./src/data/fetch_data.py
 
       - name: Train model
-        run: python ./src/model/predict_model.py
+        run: python ./src/models/predict_model.py
 
   push-job:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
         run: python ./src/data/fetch_data.py
 
       - name: Train model
-        run: python ./src/model/predict_model.py
+        run: python ./src/models/predict_model.py
 
       - name: Run tests
         run: pytest
