@@ -5,6 +5,9 @@ from flask import request
 import os
 from datetime import datetime, timedelta
 from flask_cors import CORS, cross_origin
+import subprocess
+import time
+import threading
 
 app = Flask(__name__)
 
@@ -45,6 +48,7 @@ def predict():
 def forecast():
     root_dir = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../..'))
+
     data_path = os.path.join(root_dir, 'data', 'processed', 'data.csv')
     csv = pd.read_csv(data_path, encoding='utf_8')
     df = pd.DataFrame(csv)
@@ -76,6 +80,18 @@ def forecast():
     return json_data
 
 
+def run_script_loop():
+    root_dir = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), '../..'))
+    data_script = os.path.join(root_dir, 'src', 'data', 'fetch_data.py')
+    while True:
+        subprocess.run(['python', data_script], stdout=subprocess.PIPE)
+        time.sleep(3600)
+
+
 if __name__ == '__main__':
+    script_thread = threading.Thread(target=run_script_loop)
+    script_thread.start()
+
     app.run(host='0.0.0.0', port=5000)
     cors = CORS(app, resources={r"/*": {"origins": "*"}})

@@ -1,14 +1,17 @@
-name: Test
+name: Workflow
 
 on:
   push:
     branches:
       - main
 
-jobs:
-  test:
-    runs-on: ubuntu-latest
+  schedule:
+    - cron: "0 * * * *"
 
+jobs:
+  hourly-job:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'schedule' }}
     steps:
       - uses: actions/checkout@v2
 
@@ -19,6 +22,32 @@ jobs:
 
       - name: Install dependencies
         run: pip install -r requirements.txt
+
+      - name: Fetch data
+        run: python ./src/data/fetch_data.py
+
+      - name: Train model
+        run: python ./src/model/predict_model.py
+
+  push-job:
+    runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11.1"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Fetch data
+        run: python ./src/data/fetch_data.py
+
+      - name: Train model
+        run: python ./src/model/predict_model.py
 
       - name: Run tests
         run: pytest
