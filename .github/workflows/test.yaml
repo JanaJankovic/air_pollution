@@ -49,13 +49,16 @@ jobs:
       - name: Train model
         run: python ./src/models/predict_model.py
 
-      - name: Commit changes
+      - name: Setup git config
         run: |
-          git config --local user.email "jana.jankovic@student.um.si"
-          git config --local user.name "JanaJankovic"
-          git add .
-          git commit -m "Git Action file update"
-          git push
+          git config user.name "GitHub Actions Bot"
+          git config user.email "janajankovic@users.noreply.github.com"
+
+      - name: commit
+        run: |
+          git .
+          git commit -m "GitHub Actions Bot Commit Changes"
+          git push origin main
 
       - name: Run tests
         run: pytest
