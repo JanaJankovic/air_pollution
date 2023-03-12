@@ -11,7 +11,7 @@ on:
 jobs:
   hourly-job:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'schedule' }}
+    if: github.event.schedule == "* * * * *"
     steps:
       - uses: actions/checkout@v2
 
@@ -42,7 +42,7 @@ jobs:
 
   push-job:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' }}
+    if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
 
