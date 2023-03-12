@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Injectable({
@@ -13,7 +13,7 @@ export class NetworkService {
     const lat = '46.5547222';
     const lon = '15.6466667';
     const key = '87c05a0a8d8ea08172b92485c4a60cde';
-    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}`;
+    const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric`;
     return this.httpClient.get<any>(url).pipe(
       catchError((error): any => {
         alert('Network error');
@@ -30,6 +30,17 @@ export class NetworkService {
     return this.httpClient.get<any>(url).pipe(
       catchError((error): any => {
         alert('Network error');
+        return { error: error };
+      })
+    );
+  }
+
+  getForecast(): Observable<any> {
+    const url = 'http://localhost:5000/forecast';
+    return this.httpClient.get<any>(url).pipe(
+      catchError((error): any => {
+        alert('Network error');
+        console.log(error);
         return { error: error };
       })
     );

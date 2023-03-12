@@ -1,27 +1,67 @@
-<div style="padding: 20px; color: rgb(58, 58, 58)">
+<div class="main-wrapper">
   <h1>Air Pollution Maribor</h1>
 
-  <div style="display: flex; width: 100%">
-    <div
-      style="
-        padding: 10px;
-        margin-right: 20px;
-        border-radius: 5px;
-        background-color: rgb(243, 243, 243);
-        width: 50%;
-      "
-    >
+  <div class="content-wrapper">
+    <div class="current-weather" *ngIf="currentWeather != undefined">
       <h3>Current weather</h3>
+      <div class="center-image">
+        <img
+          src="{{
+            'https://openweathermap.org/img/wn/' +
+              currentWeather.weather[0].icon +
+              '@2x.png'
+          }}"
+          alt="Icon"
+        />
+      </div>
+      <table *ngIf="airPollution != undefined">
+        <tr>
+          <td>Temperature</td>
+          <td>{{ currentWeather.main.temp }}</td>
+          <td>°C</td>
+        </tr>
+        <tr>
+          <td>Humidity</td>
+          <td>{{ currentWeather.main.humidity }}</td>
+          <td>%</td>
+        </tr>
+        <tr>
+          <td>Pressure</td>
+          <td>{{ currentWeather.main.pressure }}</td>
+          <td>hPa</td>
+        </tr>
+        <tr>
+          <td>Wind speed</td>
+          <td>{{ currentWeather.wind.speed }}</td>
+          <td>m/s</td>
+        </tr>
+        <tr>
+          <td>CO</td>
+          <td>{{ airPollution.list[0].components.co }}</td>
+          <td>μg/m3</td>
+        </tr>
+        <tr>
+          <td>NO2</td>
+          <td>{{ airPollution.list[0].components.no2 }}</td>
+          <td>μg/m3</td>
+        </tr>
+        <tr>
+          <td>SO2</td>
+          <td>{{ airPollution.list[0].components.so2 }}</td>
+          <td>μg/m3</td>
+        </tr>
+        <tr>
+          <td>PM10</td>
+          <td>{{ airPollution.list[0].components.pm10 }}</td>
+          <td>μg/m3</td>
+        </tr>
+      </table>
     </div>
-    <div
-      style="
-        padding: 10px;
-        border-radius: 5px;
-        background-color: rgb(243, 243, 243);
-        width: 100%;
-      "
-    >
+    <div class="forecast">
       <h3>Forecast</h3>
+      <div style="width: 900px">
+        <canvas #chartCanvas></canvas>
+      </div>
     </div>
   </div>
 </div>

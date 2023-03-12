@@ -1,10 +1,69 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { NetworkService } from './network.service';
+import { lastValueFrom } from 'rxjs';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss']
+  styleUrls: ['./app.component.scss'],
 })
-export class AppComponent {
-  title = 'client';
+export class AppComponent implements OnInit {
+  @ViewChild('chartCanvas')
+  chartCanvas?: ElementRef<HTMLCanvasElement>;
+  currentWeather: any;
+  airPollution: any;
+  forecast: any;
+
+  constructor(private networkService: NetworkService) {}
+
+  ngOnInit(): void {
+    this.getData();
+  }
+
+  async getData() {
+    this.currentWeather = await lastValueFrom(
+      this.networkService.getCurrentWeather()
+    );
+    this.airPollution = await lastValueFrom(
+      this.networkService.getAirPollution()
+    );
+    this.forecast = await lastValueFrom(this.networkService.getForecast());
+
+    if (this.chartCanvas != undefined && this.forecast != undefined) {
+      console.log(this.forecast.pm10);
+      this.getChart(this.chartCanvas.nativeElement);
+    }
+  }
+
+  async getChart(element: HTMLCanvasElement) {
+    new Chart(element, {
+      type: 'line',
+      data: {
+        labels: this.forecast.date,
+        datasets: [
+          {
+            label: 'Temp °C by hour',
+            data: this.forecast.temp,
+          },
+          {
+            label: 'Hum % by hour',
+            data: this.forecast.hum,
+          },
+          {
+            label: 'Wind speed m/s by hour',
+            data: this.forecast.wspeed,
+          },
+          {
+            label: 'Percipitation by hour',
+            data: this.forecast.percp,
+          },
+          {
+            label: 'PM10 μg/m3 by hour',
+            data: this.forecast.pm10,
+          },
+        ],
+      },
+    });
+  }
 }
