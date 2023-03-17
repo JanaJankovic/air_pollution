@@ -5,42 +5,37 @@ from flask import request
 import os
 from datetime import datetime, timedelta
 from flask_cors import CORS, cross_origin
-import subprocess
-import time
-import threading
+import requests
+import json
 
 app = Flask(__name__)
 
 
-def reorder(data):
-    new_data = pd.DataFrame()
-    new_data['temp'] = data['temp']
-    new_data['hum'] = data['hum']
-    new_data['percp'] = data['percp']
-    new_data['wspeed'] = data['wspeed']
-    new_data['pm10'] = data['pm10']
-    return new_data
+def get_forecast():
+    lat = '46.5547222'
+    lon = '15.6466667'
 
+    url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,relativehumidity_2m,precipitation_probability,windspeed_10m'
+    raw = requests.get(url)
+    raw = raw.json()
 
-@app.route('/air/predict/', methods=['POST'])
-@cross_origin()
-def predict():
-    object_json = request.json
-    df = reorder(object_json)
+    df = pd.DataFrame()
+    df['date'] = raw['hourly']['time']
+    df['date'] = pd.to_datetime(df['date'])
 
-    root_dir = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), '../..'))
-    model_path = os.path.join(root_dir, 'models', 'var_model')
+    df['temp'] = raw['hourly']['temperature_2m']
+    df['temp'].fillna(df['temp'].mean(), inplace=True)
 
-    f = open(model_path, 'rb')
-    model = pickle.load(f)
+    df['hum'] = raw['hourly']['relativehumidity_2m']
+    df['hum'].fillna(df['hum'].mean(), inplace=True)
 
-    predictions = model.forecast(df.values, steps=72)
-    predictions = pd.DataFrame(
-        predictions, columns=df.columns, index=df.index)
-    json_data = predictions.to_json(orient='records')
+    df['percp'] = raw['hourly']['precipitation_probability']
+    df['percp'].fillna(df['percp'].mean(), inplace=True)
 
-    return json_data
+    df['wspeed'] = raw['hourly']['windspeed_10m']
+    df['wspeed'].fillna(df['wspeed'].mean(), inplace=True)
+
+    return df
 
 
 @app.route('/forecast', methods=['GET'])
@@ -48,50 +43,26 @@ def predict():
 def forecast():
     root_dir = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../..'))
-
-    data_path = os.path.join(root_dir, 'data', 'processed', 'data.csv')
-    csv = pd.read_csv(data_path, encoding='utf_8')
-    df = pd.DataFrame(csv)
-
-    date_from = df['date'].tail(1).values[0]
-
-    df = df.drop(columns='date')
-    df = df.tail(72)
-
-    root_dir = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), '../..'))
-    model_path = os.path.join(root_dir, 'models', 'var_model')
+    model_path = os.path.join(root_dir, 'models', 'model.pickle')
 
     f = open(model_path, 'rb')
     model = pickle.load(f)
 
-    predictions = model.forecast(df.values, steps=72)
-    predictions = pd.DataFrame(
-        predictions, columns=df.columns, index=df.index)
+    df = get_forecast()
+    df_date = pd.to_datetime(df['date'])
+    df_date = df_date.dt.strftime('%Y-%m-%d %H:%M:%S')
+    df = df.drop(columns='date')
 
-    df_dict = predictions.to_dict()
+    prediction = model.predict(df)
+    df['pm10'] = prediction
+    df['date'] = df_date
+
+    df_dict = df.to_dict()
     json_data = {key: list(df_dict[key].values()) for key in df_dict}
 
-    start_date = datetime.strptime(date_from, '%Y-%m-%d %H:%M:%S')
-    start_date += timedelta(hours=1)
-    date_list = [start_date + timedelta(hours=i) for i in range(72)]
-    date_str_list = [date.strftime('%Y-%m-%d %H:%M:%S') for date in date_list]
-    json_data['date'] = date_str_list
     return json_data
 
 
-def run_script_loop():
-    root_dir = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), '../..'))
-    data_script = os.path.join(root_dir, 'src', 'data', 'fetch_data.py')
-    while True:
-        subprocess.run(['python', data_script], stdout=subprocess.PIPE)
-        time.sleep(3600)
-
-
 if __name__ == '__main__':
-    script_thread = threading.Thread(target=run_script_loop)
-    script_thread.start()
-
     app.run(host='0.0.0.0', port=5000)
     cors = CORS(app, resources={r"/*": {"origins": "*"}})

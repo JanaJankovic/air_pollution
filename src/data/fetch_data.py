@@ -58,7 +58,7 @@ def process_data(src, src1, dist):
     df1['hum'] = raw['hourly']['relativehumidity_2m']
     df1['hum'].fillna(df1['hum'].mean(), inplace=True)
 
-    df1['percp'] = raw['hourly']['precipitation']
+    df1['percp'] = raw['hourly']['precipitation_probability']
     df1['percp'].fillna(df1['percp'].mean(), inplace=True)
 
     df1['wspeed'] = raw['hourly']['windspeed_10m']
