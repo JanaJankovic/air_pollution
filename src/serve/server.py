@@ -56,6 +56,7 @@ def forecast():
     prediction = model.predict(df)
     df['pm10'] = prediction
     df['date'] = df_date
+    df = df.head(72)
 
     df_dict = df.to_dict()
     json_data = {key: list(df_dict[key].values()) for key in df_dict}
