@@ -41,7 +41,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc commit 
+          dvc commit --force
           dvc push -r origin
 
   process_air_data:
