@@ -9,7 +9,7 @@ on:
     - cron: "* 1 * * *"
 
 jobs:
-  hourly-data-update-job:
+  hourly-update-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -23,11 +23,178 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Fetch data
-        run: python ./src/data/fetch_data.py
-
       - name: Train model
         run: python ./src/models/predict_model.py
+
+  fetch_air_data:
+    runs-on: ubuntu-latest
+    outputs:
+      sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11.1"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest test/test_air_data.py
+
+      - name: Fetch data
+        run: python ./src/data/fetch_air_data.py
+
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Commit changes
+        run: |
+          dvc commit
+          dvc push -r origin
+
+  process_air_data:
+    needs: fetch_air_data
+    runs-on: ubuntu-latest
+    outputs:
+      sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11.1"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Process data
+        run: python ./src/data/process_air_data.py
+
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Commit changes
+        run: |
+          dvc commit
+          dvc push -r origin
+
+  fetch_weather_data:
+    needs: process_air_data
+    runs-on: ubuntu-latest
+    outputs:
+      sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11.1"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest test/test_weather_data.py
+
+      - name: Fetch data
+        run: python ./src/data/fetch_weather_data.py
+
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Commit changes
+        run: |
+          dvc commit
+          dvc push -r origin
+
+  process_weather_data:
+    needs: fetch_weather_data
+    runs-on: ubuntu-latest
+    outputs:
+      sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11.1"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Process data
+        run: python ./src/data/process_weather_data.py
+
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Commit changes
+        run: |
+          dvc commit
+          dvc push -r origin
+
+  merge_processed_data:
+    needs: process_weather_data
+    runs-on: ubuntu-latest
+    outputs:
+      sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.11.1"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Process data
+        run: python ./src/data/merge_processed_data.py
+
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Commit changes
+        run: |
+          dvc commit
+          dvc push -r origin
 
   push-job:
     runs-on: ubuntu-latest
@@ -44,5 +211,5 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest
+      - name: Run test
+        run: test/test_server_api.py
