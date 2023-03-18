@@ -1,3 +1,2 @@
 ['remote "origin"']
-    url = s3://dvc
-    endpointurl = https://dagshub.com/DAGsHub-Official/DAGsHub-Tutorial.s3
+    url = https://dagshub.com/JanaJankovic/air_pollution.dvc
