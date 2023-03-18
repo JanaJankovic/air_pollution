@@ -9,23 +9,6 @@ on:
     - cron: "* 1 * * *"
 
 jobs:
-  hourly-update-job:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.11.1"
-          token: ${{ secrets.TKN }}
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Train model
-        run: python ./src/models/predict_model.py
-
   fetch_air_data:
     runs-on: ubuntu-latest
     outputs:
@@ -58,7 +41,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc commit
+          dvc commit --force
           dvc push -r origin
 
   process_air_data:
@@ -91,7 +74,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc commit
+          dvc commit --force
           dvc push -r origin
 
   fetch_weather_data:
@@ -127,7 +110,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc commit
+          dvc commit --force
           dvc push -r origin
 
   process_weather_data:
@@ -160,7 +143,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc commit
+          dvc commit --force
           dvc push -r origin
 
   merge_processed_data:
@@ -193,7 +176,7 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc commit
+          dvc commit --force
           dvc push -r origin
 
   push-job:
@@ -212,4 +195,4 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Run test
-        run: test/test_server_api.py
+        run: pytest test/test_server_api.py
