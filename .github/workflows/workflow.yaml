@@ -47,9 +47,9 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc add data/raw/data.json
-          git add data/raw/data.json.dvc
-          git commit -m 'Github Actions Bot Commit data/raw/data.json.dvc'
+          dvc add data
+          git add data.dvc
+          git commit -m 'Github Actions Bot Commit data'
           git push
           dvc push -r origin
 
@@ -92,9 +92,9 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc add data/preprocessed/data_air.csv
-          git add data/preprocessed/data_air.csv.dvc
-          git commit -m 'Github Actions Bot Commit data/preprocessed/data_air.csv.dvc'
+          dvc add data
+          git add data.dvc
+          git commit -m 'Github Actions Bot Commit data'
           git push
           dvc push -r origin
 
@@ -137,9 +137,9 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc add data/raw/weather/data.json
-          git add data/raw/weather/data.json.dvc
-          git commit -m 'Github Actions Bot Commit data/raw/weather/data.json.dvc'
+          dvc add data
+          git add data.dvc
+          git commit -m 'Github Actions Bot Commit data'
           git push
           dvc push -r origin
 
@@ -179,9 +179,9 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc add data/preprocessed/data_we.csv
-          git add data/preprocessed/data_we.csv.dvc
-          git commit -m 'Github Actions Bot Commit data/preprocessed/data_we.csv.dvc'
+          dvc add data
+          git add data.dvc
+          git commit -m 'Github Actions Bot Commit data.dvc'
           git push
           dvc push -r origin
 
@@ -221,9 +221,9 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc add data/processed/data.csv
-          git add data/processed/data.csv.dvc
-          git commit -m 'Github Actions Bot Commit data/processed/data.csv.dvc'
+          dvc add data
+          git add data.dvc
+          git commit -m 'Github Actions Bot Commit data'
           git push
           dvc push -r origin
 

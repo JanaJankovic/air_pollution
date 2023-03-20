@@ -1,2 +1,4 @@
 ['remote "origin"']
     url = https://dagshub.com/JanaJankovic/air_pollution.dvc
+[core]
+    remote = origin
