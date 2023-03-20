@@ -70,6 +70,9 @@ jobs:
           python-version: "3.11.1"
           token: ${{ secrets.TKN }}
 
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
       - name: Setup Dagshub
         run: |
           dvc remote modify origin --local auth basic
@@ -80,9 +83,6 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "janajankovic@users.noreply.github.com"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
 
       - name: Pull data from dvc
         run: dvc pull
