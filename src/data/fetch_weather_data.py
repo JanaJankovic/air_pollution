@@ -12,7 +12,7 @@ print('Fetching weather data...')
 current_date = datetime.datetime.now()
 
 # Get the date one month ago
-one_month_ago = current_date - datetime.timedelta(days=30)
+one_month_ago = current_date - datetime.timedelta(days=60)
 
 # Convert dates to Unix time
 current_unix_time = int(current_date.timestamp())
