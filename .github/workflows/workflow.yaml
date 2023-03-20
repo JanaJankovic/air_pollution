@@ -41,6 +41,7 @@ jobs:
 
       - name: Commit changes
         run: |
+          dvc add data
           dvc commit --force
           dvc push -r origin
 
