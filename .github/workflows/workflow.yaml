@@ -73,6 +73,9 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Pull data from dvc
+        run: dvc pull
+
       - name: Process data
         run: python ./src/data/preprocess_air_data.py
 
