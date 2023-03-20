@@ -51,7 +51,7 @@ jobs:
           git add data/raw/data.json.dvc
           git commit -m 'Github Actions Bot Commit data/raw/data.json.dvc'
           git push
-          dvc commit -R
+          dvc commit -R -v
           dvc push -r origin
 
   process_air_data:
