@@ -74,7 +74,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Process data
-        run: python ./src/data/process_air_data.py
+        run: python ./src/data/preprocess_air_data.py
 
       - name: Setup Dagshub
         run: |
@@ -161,7 +161,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Process data
-        run: python ./src/data/process_weather_data.py
+        run: python ./src/data/preprocess_weather_data.py
 
       - name: Setup Dagshub
         run: |
