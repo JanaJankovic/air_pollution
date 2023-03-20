@@ -28,12 +28,6 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Run tests
-        run: pytest test/test_air_data.py
-
-      - name: Fetch data
-        run: python ./src/data/fetch_air_data.py
-
       - name: Setup Dagshub
         run: |
           dvc remote modify origin --local auth basic
@@ -44,6 +38,15 @@ jobs:
         run: |
           git config user.name "GitHub Actions Bot"
           git config user.email "janajankovic@users.noreply.github.com"
+
+      - name: Pull data from dvc
+        run: dvc pull
+
+      - name: Run tests
+        run: pytest test/test_air_data.py
+
+      - name: Fetch data
+        run: python ./src/data/fetch_air_data.py
 
       - name: Commit changes
         run: |
