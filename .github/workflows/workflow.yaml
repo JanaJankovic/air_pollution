@@ -70,6 +70,17 @@ jobs:
           python-version: "3.11.1"
           token: ${{ secrets.TKN }}
 
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+
+      - name: Setup Github
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "janajankovic@users.noreply.github.com"
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -78,17 +89,6 @@ jobs:
 
       - name: Process data
         run: python ./src/data/preprocess_air_data.py
-
-      - name: Setup Dagshub
-        run: |
-          dvc remote modify origin --local auth basic
-          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
-          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
-
-      - name: Setup git config
-        run: |
-          git config user.name "GitHub Actions Bot"
-          git config user.email "janajankovic@users.noreply.github.com"
 
       - name: Commit changes
         run: |
