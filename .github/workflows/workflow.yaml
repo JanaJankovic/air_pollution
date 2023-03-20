@@ -48,7 +48,7 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data/raw/data.json
-          git add 'data\raw\data.json.dvc'
+          git add data\raw\data.json.dvc
           git commit -m 'Github Actions Bot Commit data\raw\data.json.dvc'
           git push
           dvc commit --force
