@@ -10,17 +10,17 @@ on:
 
 jobs:
   fetch_air_data:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
@@ -60,17 +60,17 @@ jobs:
 
   process_air_data:
     needs: fetch_air_data
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
@@ -107,17 +107,17 @@ jobs:
 
   fetch_weather_data:
     needs: process_air_data
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
@@ -157,17 +157,17 @@ jobs:
 
   process_weather_data:
     needs: fetch_weather_data
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
@@ -204,17 +204,17 @@ jobs:
 
   merge_processed_data:
     needs: process_weather_data
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
@@ -250,13 +250,13 @@ jobs:
           dvc push -r origin
 
   push_job:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
@@ -268,15 +268,12 @@ jobs:
         run: pytest test/test_server_api.py
   
   great_expectations_validation:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-
-      - name: Update CA certificates
-        run: sudo apt-get update && sudo apt-get install -y ca-certificates
-
+      - uses: actions/checkout@v3
+      
       - name: Setup Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
