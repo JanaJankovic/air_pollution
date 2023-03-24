@@ -28,6 +28,8 @@ df1 = df1.reset_index(drop=True)
 
 df1['pm10'] = df.loc[:, 'pm10']
 
+df1 = df1.drop(columns=['date'])
+
 print('Saving processed data...')
 df1.to_csv(merged, index=False)
 

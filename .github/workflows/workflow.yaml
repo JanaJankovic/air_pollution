@@ -279,19 +279,21 @@ jobs:
           token: ${{ secrets.TKN }}
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install poetry
+          poetry install --no-root --without dev
 
       - name: Setup Dagshub
         run: |
           dvc remote modify origin --local auth basic
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+      
+      - name: Pull data
+        run: |
           dvc pull
-
-      - name: Copy Repository contents
-        uses: actions/checkout@main 
   
       - name: Run Checkpoint
         run: |
-          python great_expectations/checkpoints/run_github_stats_checkpoint.py
+          poetry run python great_expectations/expectations/run_github_stats_checkpoint.py
 
