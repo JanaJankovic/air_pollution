@@ -296,6 +296,5 @@ jobs:
       - name: Run Checkpoint
         run: |
           dvc pull
-          ls
-          poetry run python ./great_expectations/expectations/run_github_stats_checkpoint.py
+          poetry run python ../great_expectations/expectations/run_github_stats_checkpoint.py
 
