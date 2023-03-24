@@ -269,27 +269,26 @@ jobs:
   
   great_expectations_validation:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push'
     steps:
-      - uses: actions/checkout@v2
+    - name: Install python
+      uses: actions/setup-python@v3
+ 
+    - name: Copy Repository contents
+      uses: actions/checkout@main 
+ 
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Setup Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: "3.10.5"
-      
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Setup Dagshub
-        run: |
-          pip install dvc
-          dvc remote modify origin --local auth basic
-          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
-          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
-  
-      - name: Run Checkpoint
-        run: |
-          dvc pull
-          python ./great_expectations/expectations/run_github_stats_checkpoint.py
+    - name: Setup Dagshub
+      run: |
+        dvc remote modify origin --local auth basic
+        dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+        dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+        dvc pull
+ 
+    - name: Run Checkpoint
+      run: |
+        python great_expectations/checkpoints/run_github_stats_checkpoint.py
 
