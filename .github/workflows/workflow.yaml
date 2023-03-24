@@ -287,6 +287,9 @@ jobs:
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
           dvc pull
+
+      - name: Copy Repository contents
+        uses: actions/checkout@main 
   
       - name: Run Checkpoint
         run: |
