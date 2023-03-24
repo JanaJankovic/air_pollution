@@ -284,6 +284,7 @@ jobs:
 
       - name: Setup Dagshub
         run: |
+          pip install dvc
           dvc remote modify origin --local auth basic
           dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
           dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
