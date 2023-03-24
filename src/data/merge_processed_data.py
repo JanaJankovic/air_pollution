@@ -6,7 +6,7 @@ root_dir = os.path.abspath(os.path.join(
 
 air_proc = os.path.join(root_dir, 'data', 'preprocessed', 'data_air.csv')
 we_proc = os.path.join(root_dir, 'data', 'preprocessed', 'data_we.csv')
-merged = os.path.join(root_dir, 'data', 'processed', 'data.csv')
+merged = os.path.join(root_dir, 'data', 'processed', 'current_data.csv')
 
 
 print('Merging data...')
