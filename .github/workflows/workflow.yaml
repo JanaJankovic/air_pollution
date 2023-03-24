@@ -277,17 +277,9 @@ jobs:
         with:
           python-version: "3.10.5"
           token: ${{ secrets.TKN }}
-
-      - name: Install python
-        uses: actions/setup-python@v3
-  
-      - name: Copy Repository contents
-        uses: actions/checkout@main 
-  
+      
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Setup Dagshub
         run: |
