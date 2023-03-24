@@ -8,6 +8,6 @@ statsmodels==0.13.5
 requests==2.28.2
 dvc==2.50.0
 dvc-s3==2.21.0
-great-expectations=0.16.1
-evidently=0.2.7
-mlflow=2.2.2
+great-expectations==0.16.1
+evidently==0.2.7
+mlflow==2.2.2
