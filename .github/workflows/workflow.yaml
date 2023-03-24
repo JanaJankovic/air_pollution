@@ -272,6 +272,9 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Update CA certificates
+        run: sudo apt-get update && sudo apt-get install -y ca-certificates
+
       - name: Setup Python
         uses: actions/setup-python@v2
         with:
