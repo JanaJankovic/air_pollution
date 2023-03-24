@@ -10,7 +10,7 @@ on:
 
 jobs:
   fetch_air_data:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
@@ -60,7 +60,7 @@ jobs:
 
   process_air_data:
     needs: fetch_air_data
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
@@ -107,7 +107,7 @@ jobs:
 
   fetch_weather_data:
     needs: process_air_data
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
@@ -157,7 +157,7 @@ jobs:
 
   process_weather_data:
     needs: fetch_weather_data
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
@@ -204,7 +204,7 @@ jobs:
 
   merge_processed_data:
     needs: process_weather_data
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     outputs:
       sha_new: ${{steps.sha_new.outputs.SHA_NEW}}
     permissions:
@@ -250,7 +250,7 @@ jobs:
           dvc push -r origin
 
   push_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     if: github.event_name == 'push'
     steps:
       - uses: actions/checkout@v2
@@ -268,7 +268,7 @@ jobs:
         run: pytest test/test_server_api.py
   
   great_expectations_validation:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
 
