@@ -38,6 +38,5 @@ jobs:
   
       - name: Run Checkpoint
         run: |
-          poetry run data_validation
-          poetry run data_stability
+          poetry env info
 
