@@ -34,7 +34,7 @@ def main():
     path = os.path.join(root_dir, 'great_expectations')
 
     data_context: FileDataContext = get_context(
-        context_root_dir=path
+        context_root_dir="great_expectations"
     )
 
     result: CheckpointResult = data_context.run_checkpoint(
