@@ -35,8 +35,9 @@ jobs:
       - name: Pull data
         run: |
           dvc pull
+          ln -s "$(poetry env info cache-dir)" /data
   
       - name: Run Checkpoint
         run: |
-          poetry env info
+          poetry run data_validation
 
