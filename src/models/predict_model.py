@@ -9,7 +9,6 @@ import numpy as np
 def predict_model(data_path, model_path, train_metrics_path, metrics_path):
     csv = pd.read_csv(data_path, encoding='utf_8')
     df = pd.DataFrame(csv)
-    df = df.drop(columns='date')
     print('Data read')
 
     columns = np.array(df.columns)
@@ -53,15 +52,19 @@ def predict_model(data_path, model_path, train_metrics_path, metrics_path):
     print('Model serialized')
 
 
-if __name__ == '__main__':
+def main():
     import os
 
     root_dir = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../..'))
 
-    data_path = os.path.join(root_dir, 'data', 'processed', 'data.csv')
+    data_path = os.path.join(root_dir, 'data', 'processed', 'current_data.csv')
     model_path = os.path.join(root_dir, 'models', 'model.pickle')
     train_metrics_path = os.path.join(root_dir, 'reports', 'train_metrics.txt')
     metrics_path = os.path.join(root_dir, 'reports', 'metrics.txt')
 
     predict_model(data_path, model_path, train_metrics_path, metrics_path)
+
+
+if __name__ == '__main__':
+    main()

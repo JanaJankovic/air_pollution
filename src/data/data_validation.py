@@ -24,19 +24,28 @@ from great_expectations.checkpoint.types.checkpoint_result import (
 from great_expectations.data_context import FileDataContext  # noqa: TCH001
 from great_expectations.util import get_context
 
-data_context: FileDataContext = get_context(
-    context_root_dir="great_expectations"
-)
+import os
 
-result: CheckpointResult = data_context.run_checkpoint(
-    checkpoint_name="my_checkpoint",
-    batch_request=None,
-    run_name=None,
-)
 
-if not result["success"]:
-    print("Validation failed!")
-    sys.exit(1)
+def main():
+    root_dir = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), '../..'))
 
-print("Validation succeeded!")
-sys.exit(0)
+    path = os.path.join(root_dir, 'great_expectations')
+
+    data_context: FileDataContext = get_context(
+        context_root_dir=path
+    )
+
+    result: CheckpointResult = data_context.run_checkpoint(
+        checkpoint_name="my_checkpoint",
+        batch_request=None,
+        run_name=None,
+    )
+
+    if not result["success"]:
+        print("Validation failed!")
+        sys.exit(1)
+
+    print("Validation succeeded!")
+    sys.exit(0)

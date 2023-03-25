@@ -2,31 +2,33 @@ import pandas as pd
 import json
 import os
 
-root_dir = os.path.abspath(os.path.join(
-    os.path.dirname(__file__), '../..'))
-we = os.path.join(root_dir, 'data', 'raw', 'weather', 'data.json')
-we_proc = os.path.join(root_dir, 'data', 'preprocessed', 'data_we.csv')
 
-print('Processing weather data...')
-f = open(we, 'r', encoding='utf-8')
-raw = json.load(f)
-f.close()
+def main():
+    root_dir = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), '../..'))
+    we = os.path.join(root_dir, 'data', 'raw', 'weather', 'data.json')
+    we_proc = os.path.join(root_dir, 'data', 'preprocessed', 'data_we.csv')
 
-df = pd.DataFrame()
-df['date'] = raw['hourly']['time']
-df['date'] = pd.to_datetime(df['date'])
+    print('Processing weather data...')
+    f = open(we, 'r', encoding='utf-8')
+    raw = json.load(f)
+    f.close()
 
-df['temp'] = raw['hourly']['temperature_2m']
-df['temp'].fillna(df['temp'].mean(), inplace=True)
+    df = pd.DataFrame()
+    df['date'] = raw['hourly']['time']
+    df['date'] = pd.to_datetime(df['date'])
 
-df['hum'] = raw['hourly']['relativehumidity_2m']
-df['hum'].fillna(df['hum'].mean(), inplace=True)
+    df['temp'] = raw['hourly']['temperature_2m']
+    df['temp'].fillna(df['temp'].mean(), inplace=True)
 
-df['percp'] = raw['hourly']['precipitation']
-df['percp'].fillna(df['percp'].mean(), inplace=True)
+    df['hum'] = raw['hourly']['relativehumidity_2m']
+    df['hum'].fillna(df['hum'].mean(), inplace=True)
 
-df['wspeed'] = raw['hourly']['windspeed_10m']
-df['wspeed'].fillna(df['wspeed'].mean(), inplace=True)
+    df['percp'] = raw['hourly']['precipitation']
+    df['percp'].fillna(df['percp'].mean(), inplace=True)
 
-print('Saving processed data...')
-df.to_csv(we_proc, index=False)
+    df['wspeed'] = raw['hourly']['windspeed_10m']
+    df['wspeed'].fillna(df['wspeed'].mean(), inplace=True)
+
+    print('Saving processed data...')
+    df.to_csv(we_proc, index=False)

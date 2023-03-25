@@ -64,6 +64,10 @@ def forecast():
     return json_data
 
 
-if __name__ == '__main__':
+def main():
     app.run(host='0.0.0.0', port=5000)
     cors = CORS(app, resources={r"/*": {"origins": "*"}})
+
+
+if __name__ == '__main__':
+    main()

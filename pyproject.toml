@@ -4,15 +4,21 @@ version = "0.1.0"
 description = ""
 authors = ["Jana Jankovic"]
 readme = "README.md"
+packages = [
+    { include = "src/data/*.py" },
+    { include = "src/models/*.py" },
+]
 
-#[tool.poetry.scripts]
-#fetch_air_data = "src.data.fetch_air_data:main"
-#fetch_weather_data = "src/data/fetch_weather_data"
-#preprocess_air_data = "src/data/preprocess_air_data.py"
-#preprocess_weather_data = "src/data/preprocess_weather_data.py"
-#merge_processed_data = "src/data/merge_processed_data.py"
-#predict_model = "src/model/predict_model.py"
-#server = "src/serve/server.py"
+[tool.poetry.scripts]
+fetch_air_data = "src.data.fetch_air_data:main"
+fetch_weather_data = "src.data.fetch_weather_data:main"
+preprocess_air_data = "src.data.preprocess_air_data:main"
+preprocess_weather_data = "src.data.preprocess_weather_data:main"
+merge_processed_data = "src.data.merge_processed_data:main"
+predict_model = "src.models.predict_model:main"
+server = "src.serve.server:main"
+data_stability = "src.data.data_stability:main"
+data_validation = "src.data.data_validation:main"
 
 [tool.poetry.dependencies]
 python = "3.10.5"
