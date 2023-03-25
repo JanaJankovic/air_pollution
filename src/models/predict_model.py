@@ -4,52 +4,76 @@ from sklearn.metrics import mean_absolute_error, mean_squared_error, explained_v
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 import numpy as np
+import mlflow
 
 
-def predict_model(data_path, model_path, train_metrics_path, metrics_path):
-    csv = pd.read_csv(data_path, encoding='utf_8')
-    df = pd.DataFrame(csv)
-    print('Data read')
+def predict_model(train_path, test_path, model_path, train_metrics_path, metrics_path):
+    MLFLOW_TRACKING_URI = "https://dagshub.com/JanaJankovic/air_pollution.mlflow"
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    mlflow.set_experiment("mlruns")
+    # mlflow.sklearn.autolog()
 
-    columns = np.array(df.columns)
-    mask = columns != 'pm10'
-    x_train, x_test, y_train, y_test = train_test_split(
-        df[columns[mask]], df['pm10'], test_size=0.3, random_state=1234, shuffle=True)
-    model = LinearRegression()
-    model.fit(x_train, y_train)
-    print('Model trained')
+    with mlflow.start_run():
+        csv = pd.read_csv(train_path, encoding='utf_8')
+        train = pd.DataFrame(csv)
 
-    prediction = model.predict(x_test)
+        csv = pd.read_csv(test_path, encoding='utf_8')
+        test = pd.DataFrame(csv)
+        print('Data read')
 
-    # Calculate MSE and MAE for the test data
-    mse_test = mean_squared_error(y_test, prediction)
-    mae_test = mean_absolute_error(y_test, prediction)
-    evs_test = explained_variance_score(y_test, prediction)
+        columns = np.array(train.columns)
+        mask = columns != 'pm10'
+        x_train = train[columns[mask]]
+        y_train = train['pm10']
+        x_test = test[columns[mask]]
+        y_test = test['pm10']
 
-    # Make predictions for the training data
-    predictions_train = model.predict(x_train)
+        model = LinearRegression()
+        model.fit(x_train, y_train)
+        print('Model trained')
 
-    # Calculate MSE and MAE for the training data
-    mse_train = mean_squared_error(y_train, predictions_train)
-    mae_train = mean_absolute_error(y_train, predictions_train)
-    evs_train = explained_variance_score(y_train, predictions_train)
+        prediction = model.predict(x_test)
 
-    with open(train_metrics_path, 'w') as file:
-        file.write('MAE:' + str(mae_train) + '\n')
-        file.write('MSE:' + str(mse_train) + '\n')
-        file.write('EVS:' + str(evs_train) + '\n')
+        # Calculate MSE and MAE for the test data
+        mse_test = mean_squared_error(y_test, prediction)
+        mae_test = mean_absolute_error(y_test, prediction)
+        evs_test = explained_variance_score(y_test, prediction)
 
-    with open(metrics_path, 'w') as file:
-        file.write('MAE:' + str(mae_test) + '\n')
-        file.write('MSE:' + str(mse_test) + '\n')
-        file.write('EVS:' + str(evs_test) + '\n')
+        mlflow.log_metric("MSE Test", mse_test)
+        mlflow.log_metric("MAE Test", mae_test)
+        mlflow.log_metric("EVS Test", evs_test)
 
-    print('Reports updated')
+        # Make predictions for the training data
+        predictions_train = model.predict(x_train)
 
-    with open(model_path, 'wb') as f:
-        pickle.dump(model, f)
+        # Calculate MSE and MAE for the training data
+        mse_train = mean_squared_error(y_train, predictions_train)
+        mae_train = mean_absolute_error(y_train, predictions_train)
+        evs_train = explained_variance_score(y_train, predictions_train)
 
-    print('Model serialized')
+        mlflow.log_metric("MSE Train", mse_train)
+        mlflow.log_metric("MAE Train", mae_train)
+        mlflow.log_metric("EVS Train", evs_train)
+
+        with open(train_metrics_path, 'w') as file:
+            file.write('MAE:' + str(mae_train) + '\n')
+            file.write('MSE:' + str(mse_train) + '\n')
+            file.write('EVS:' + str(evs_train) + '\n')
+
+        with open(metrics_path, 'w') as file:
+            file.write('MAE:' + str(mae_test) + '\n')
+            file.write('MSE:' + str(mse_test) + '\n')
+            file.write('EVS:' + str(evs_test) + '\n')
+
+        print('Reports updated')
+
+        with open(model_path, 'wb') as f:
+            pickle.dump(model, f)
+
+        print('Model serialized')
+
+    autolog_run = mlflow.last_active_run()
+    print(autolog_run)
 
 
 def main():
@@ -58,12 +82,14 @@ def main():
     root_dir = os.path.abspath(os.path.join(
         os.path.dirname(__file__), '../..'))
 
-    data_path = os.path.join(root_dir, 'data', 'processed', 'current_data.csv')
+    train_path = os.path.join(root_dir, 'data', 'processed', 'train.csv')
+    test_path = os.path.join(root_dir, 'data', 'processed', 'test.csv')
     model_path = os.path.join(root_dir, 'models', 'model.pickle')
     train_metrics_path = os.path.join(root_dir, 'reports', 'train_metrics.txt')
     metrics_path = os.path.join(root_dir, 'reports', 'metrics.txt')
 
-    predict_model(data_path, model_path, train_metrics_path, metrics_path)
+    predict_model(train_path, test_path, model_path,
+                  train_metrics_path, metrics_path)
 
 
 if __name__ == '__main__':
