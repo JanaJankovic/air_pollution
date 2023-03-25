@@ -22,10 +22,6 @@ data_validation = "src.data.data_validation:main"
 split_train_test = "src.data.split_train_test:main"
 update_reference = "src.data.update_reference:main"
 
-[tool.poetry.install."data"]
-strategy = "copy"
-path = "./data"
-
 [tool.poetry.dependencies]
 python = "3.10.5"
 numpy = "1.23.5"
