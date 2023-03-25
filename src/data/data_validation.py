@@ -28,8 +28,7 @@ import os
 
 
 def main():
-    root_dir = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), '../..'))
+    root_dir = os.getcwd()
 
     path = os.path.join(root_dir, 'great_expectations')
 
