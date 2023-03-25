@@ -27,17 +27,17 @@ jobs:
 
       - name: Setup Dagshub
         run: |
-          dvc remote modify origin --local auth basic
-          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
-          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+          poetry run dvc remote modify origin --local auth basic
+          poetry run dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          poetry run dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
       
       - name: Pull data
         run: |
-          dvc pull
+          poetry run dvc pull
   
       - name: Run Checkpoint
         run: |
           poetry env list
           poetry env info
-          poetry run 
+          poetry run data_validation
 
