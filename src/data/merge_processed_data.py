@@ -35,3 +35,7 @@ def main():
     df1.to_csv(merged, index=False)
 
     print('Finished!')
+
+
+if __name__ == '__main__':
+    main()

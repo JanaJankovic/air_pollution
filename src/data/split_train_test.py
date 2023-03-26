@@ -21,3 +21,7 @@ def main():
 
     print('Saving test data...')
     test_data.to_csv(test, index=False)
+
+
+if __name__ == '__main__':
+    main()

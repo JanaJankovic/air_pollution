@@ -37,3 +37,7 @@ def main():
             json.dump(data, f)
     else:
         print("Failed to retrieve JSON data")
+
+
+if __name__ == '__main__':
+    main()

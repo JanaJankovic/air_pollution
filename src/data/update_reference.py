@@ -13,3 +13,7 @@ def main():
 
     print('Updating reference data...')
     current_data.to_csv(reference, index=False)
+
+
+if __name__ == '__main__':
+    main()

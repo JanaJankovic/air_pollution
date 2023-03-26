@@ -48,3 +48,7 @@ def main():
 
     print('Saving processed data')
     df.to_csv(air_proc, index=False)
+
+
+if __name__ == '__main__':
+    main()
