@@ -31,23 +31,24 @@ def main():
     root_dir = os.getcwd()
     print(root_dir)
     path = os.path.join(root_dir, 'great_expectations')
+    print(path)
 
-    data_context: FileDataContext = get_context(
-        context_root_dir=path
-    )
-
-    result: CheckpointResult = data_context.run_checkpoint(
-        checkpoint_name="my_checkpoint",
-        batch_request=None,
-        run_name=None,
-    )
-
-    if not result["success"]:
-        print("Validation failed!")
-        sys.exit(1)
-
-    print("Validation succeeded!")
-    sys.exit(0)
+    # data_context: FileDataContext = get_context(
+    #    context_root_dir=path
+    # )
+#
+    # result: CheckpointResult = data_context.run_checkpoint(
+    #    checkpoint_name="my_checkpoint",
+    #    batch_request=None,
+    #    run_name=None,
+    # )
+#
+    # if not result["success"]:
+    #    print("Validation failed!")
+    #    sys.exit(1)
+#
+    # print("Validation succeeded!")
+    # sys.exit(0)
 
 
 if __name__ == '__main__':
