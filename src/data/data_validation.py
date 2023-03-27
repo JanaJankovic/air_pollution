@@ -28,8 +28,8 @@ import os
 
 
 def main():
-    root_dir = os.getcwd()
-
+    root_dir = os.path.abspath(os.path.join(
+        os.path.dirname(__file__), '../..'))
     path = os.path.join(root_dir, 'great_expectations')
 
     data_context: FileDataContext = get_context(
