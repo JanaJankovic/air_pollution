@@ -367,11 +367,9 @@ jobs:
 
       - name: Commit changes
         run: |
-          dvc add data
           git add .
           git commit -m 'Github Actions Bot Commit data'
           git push
-          dvc push -r origin
 
   post_data_pipeline_actions:
     needs: test_stability_data
