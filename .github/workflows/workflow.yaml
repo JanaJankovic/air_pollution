@@ -320,14 +320,7 @@ jobs:
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-      
-      - name: Commit changes
-        run: |
-          dvc add data
-          git add .
-          git commit -m 'Github Actions Bot Commit data'
-          git push
-          dvc push -r origin      
+         
 
   test_stability_data:
     needs: validate_data
