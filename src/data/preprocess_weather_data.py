@@ -23,6 +23,7 @@ def main():
 
     df['hum'] = raw['hourly']['relativehumidity_2m']
     df['hum'].fillna(df['hum'].mean(), inplace=True)
+    df['hum'] = df['hum'].astype(float)
 
     df['percp'] = raw['hourly']['precipitation']
     df['percp'].fillna(df['percp'].mean(), inplace=True)
