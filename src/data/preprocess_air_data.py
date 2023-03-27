@@ -44,7 +44,10 @@ def main():
     df['pm10'].fillna((df['pm10'].mean()), inplace=True)
     df['datum_od'] = pd.to_datetime(df['datum_od'])
     df = df.sort_values(by='datum_od')
-    df = df.drop_duplicates(subset='datum_od', keep='first')
+    df = df.drop_duplicates(subset='datum_od')
+
+    df['date'] = df['datum_od']
+    df = df.drop(columns='datum_od')
 
     print('Saving processed data')
     df.to_csv(air_proc, index=False)

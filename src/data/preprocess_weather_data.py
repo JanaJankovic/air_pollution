@@ -30,6 +30,9 @@ def main():
     df['wspeed'] = raw['hourly']['windspeed_10m']
     df['wspeed'].fillna(df['wspeed'].mean(), inplace=True)
 
+    missing_values = df.isnull().sum()
+    print(missing_values)
+
     print('Saving processed data...')
     df.to_csv(we_proc, index=False)
 

@@ -20,6 +20,7 @@ def test_weather_api():
     start_date = datetime.datetime.utcfromtimestamp(
         one_month_ago_unix_time).strftime('%Y-%m-%d')
 
-    url = f'https://archive-api.open-meteo.com/v1/archive?latitude={lat}&longitude={lon}&start_date={start_date}&end_date={end_date}&hourly=temperature_2m,relativehumidity_2m,precipitation,windspeed_10m'
+    url = f'https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&start_date={start_date}&end_date={end_date}&hourly=temperature_2m,relativehumidity_2m,precipitation,windspeed_10m&timezone=Europe%2FBerlin'
+
     response = requests.get(url)
     assert response.status_code == 200
