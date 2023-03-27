@@ -23,8 +23,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          poetry install
-          poetry shell
+          poetry install --no-root
 
       - name: Setup Dagshub
         run: |
