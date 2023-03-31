@@ -1,4 +1,4 @@
-name: API Workflow
+name: Model Workflow
 
 on:
   workflow_run:
