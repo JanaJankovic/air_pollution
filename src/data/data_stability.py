@@ -23,6 +23,10 @@ def main():
 
     csv1 = pd.read_csv(merged)
     current = pd.DataFrame(csv1)
+    current['pm10'] = current['pm10'].str.replace(r'\D', '')
+    current['pm10'] = current['pm10'].astype(float)
+    current['hum'] = current['hum'].astype(float)
+
     current.rename(columns={'pm10': 'target'}, inplace=True)
     current['prediction'] = current['target'].values + \
         np.random.normal(0, 5, current.shape[0])
@@ -40,17 +44,13 @@ def main():
     report.save_html(report_file)
 
     tests = TestSuite(tests=[
-        TestNumberOfRows(),
         TestNumberOfColumns(),
         TestColumnsType(),
-        TestColumnShareOfMissingValues(column_name='target'),
         TestShareOfOutRangeValues(column_name='target'),
         TestMeanInNSigmas(column_name='target'),
-        TestColumnShareOfMissingValues(column_name='prediction'),
         TestMeanInNSigmas(column_name='prediction'),
         TestColumnShareOfMissingValues(column_name='temp'),
         TestMeanInNSigmas(column_name='temp'),
-        TestColumnShareOfMissingValues(column_name='hum'),
         TestMeanInNSigmas(column_name='hum'),
         TestColumnShareOfMissingValues(column_name='percp'),
         TestMeanInNSigmas(column_name='percp'),

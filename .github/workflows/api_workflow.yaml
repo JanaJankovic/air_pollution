@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  push_job:
+  api_test:
     runs-on: ubuntu-latest
     if: github.event_name == 'push'
     steps:

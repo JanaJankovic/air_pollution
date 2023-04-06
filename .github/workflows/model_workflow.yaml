@@ -7,7 +7,7 @@ on:
       - completed
 
 jobs:
-  push_job:
+  model_train:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

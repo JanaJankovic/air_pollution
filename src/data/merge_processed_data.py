@@ -13,19 +13,13 @@ def main():
     print('Merging data...')
     csv = pd.read_csv(air_proc, encoding='utf_8')
     df = pd.DataFrame(csv)
+    df = df.rename(columns={'datum_od': 'date'})
 
     csv = pd.read_csv(we_proc, encoding='utf_8')
     df1 = pd.DataFrame(csv)
 
-    start = df['date'].iloc[0]
-    end = df['date'].iloc[-1]
-
-    start_index = df1.loc[df1['date'] == start].index[0]
-    end_index = df1.loc[df1['date'] == end].index[0]
-    df1 = df1.iloc[start_index:end_index + 1]
-
-    df = df.reset_index(drop=True)
-    df1 = df1.reset_index(drop=True)
+    df['date'] = pd.to_datetime(df['date'])
+    df1['date'] = pd.to_datetime(df1['date'])
 
     merged_df = pd.merge(df1, df, on='date', how='inner')
     merged_df = merged_df.drop(columns='date')
