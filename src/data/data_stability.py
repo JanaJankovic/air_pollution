@@ -33,6 +33,10 @@ def main():
 
     csv2 = pd.read_csv(referenced)
     reference = pd.DataFrame(csv2)
+    reference['pm10'] = reference['pm10'].str.replace(r'\D', '')
+    reference['pm10'] = reference['pm10'].astype(float)
+    reference['hum'] = reference['hum'].astype(float)
+
     reference.rename(columns={'pm10': 'target'}, inplace=True)
     reference['prediction'] = reference['target'].values + \
         np.random.normal(0, 5, reference.shape[0])

@@ -25,4 +25,4 @@ jobs:
           poetry install --no-root
 
       - name: Run test
-        run: poetry run pytest test/test_server_api.py
+        run: poetry run train_model

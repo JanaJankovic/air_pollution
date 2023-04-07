@@ -1,14 +1,20 @@
 import pickle
 import pandas as pd
 from flask import Flask
-from flask import request
-import os
-from datetime import datetime, timedelta
 from flask_cors import CORS, cross_origin
 import requests
-import json
+from mlflow import MlflowClient
+import mlflow
 
 app = Flask(__name__)
+
+MLFLOW_TRACKING_URI = "https://dagshub.com/JanaJankovic/air_pollution.mlflow"
+mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+client = MlflowClient()
+model_version_info = client.get_latest_versions(
+    "MLPRegressor", stages=["Production"])[0]
+model_uri = model_version_info.source
+model = mlflow.pyfunc.load_model(model_uri)
 
 
 def get_forecast():
@@ -41,17 +47,13 @@ def get_forecast():
 @app.route('/forecast', methods=['GET'])
 @cross_origin()
 def forecast():
-    root_dir = os.path.abspath(os.path.join(
-        os.path.dirname(__file__), '../..'))
-    model_path = os.path.join(root_dir, 'models', 'model.pickle')
-
-    f = open(model_path, 'rb')
-    model = pickle.load(f)
 
     df = get_forecast()
     df_date = pd.to_datetime(df['date'])
     df_date = df_date.dt.strftime('%Y-%m-%d %H:%M:%S')
     df = df.drop(columns='date')
+    df = df.astype(float)
+    df['hum'] = df['hum'].astype(int)
 
     prediction = model.predict(df)
     df['pm10'] = prediction
