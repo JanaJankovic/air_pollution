@@ -47,8 +47,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
@@ -92,8 +92,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
@@ -139,8 +139,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
@@ -184,8 +184,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
@@ -229,8 +229,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
@@ -320,8 +320,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
@@ -367,8 +367,8 @@ jobs:
       - name: Commit changes
         run: |
           dvc add data
+          git add .
           if git diff-index --quiet HEAD --; then
-            git add .
             git commit -m 'Github Actions Bot Commit data'
             git push
             dvc push -r origin
