@@ -24,11 +24,6 @@ jobs:
       #----------------------------------------------
       - name: Install Poetry
         uses: snok/install-poetry@v1
-        with:
-          virtualenvs-create: true
-          virtualenvs-in-project: true
-          installer-parallel: true
-
       #----------------------------------------------
       #       load cached venv if cache exists
       #----------------------------------------------
@@ -43,12 +38,7 @@ jobs:
       #----------------------------------------------
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
-      #----------------------------------------------
-      # install your root project, if required
-      #----------------------------------------------
-      - name: Install project
-        run: poetry install --no-interaction
+        run: poetry install poetry install --no-root --no-dev --no-interaction --no-ansi --verbose --no-parallel --no-root
       #----------------------------------------------
       #              run test suite
       #----------------------------------------------
