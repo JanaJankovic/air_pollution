@@ -30,6 +30,7 @@ jobs:
         env:
           POETRY_VIRTUALENVS_IN_PROJECT: true
         run: |
+          pip install poetry
           poetry config virtualenvs.create false
           poetry install --no-interaction --no-ansi --no-root
       
