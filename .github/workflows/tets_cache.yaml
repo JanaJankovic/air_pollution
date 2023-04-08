@@ -49,4 +49,6 @@ jobs:
           key: ${{ runner.os }}-poetry-${{ hashFiles('**/poetry.lock') }}
       
       - name: Run test
-        run: poetry run pytest test/test_server_api.py
+        run: |
+          pip install poetry
+          poetry run pytest test/test_server_api.py
