@@ -38,7 +38,10 @@ jobs:
       #----------------------------------------------
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-root --no-dev --no-interaction
+        run: |
+          poetry export -f requirements.txt > requirements.txt
+          python -m pip install -r requirements.txt
+          poetry install
       #----------------------------------------------
       #              run test suite
       #----------------------------------------------
