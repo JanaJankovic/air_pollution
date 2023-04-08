@@ -58,4 +58,6 @@ jobs:
         env:
           POETRY_VIRTUALENVS_IN_PROJECT: true
         run: |
+          pip install poetry
+          poetry install
           poetry run pytest
