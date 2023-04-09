@@ -44,14 +44,18 @@ jobs:
         run: poetry run pytest test/test_air_data.py
       - name: Fetch data
         run: poetry run fetch_air_data
-      - name: Commit changes
+      
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
   
   process_air_data:
     needs: fetch_air_data
@@ -89,14 +93,17 @@ jobs:
           dvc pull
       - name: Process data
         run: poetry run preprocess_air_data
-      - name: Commit changes
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
   
   fetch_weather_data:
     needs: process_air_data
@@ -136,14 +143,17 @@ jobs:
         run: poetry run pytest test/test_weather_data.py
       - name: Fetch data
         run: poetry run fetch_weather_data
-      - name: Commit changes
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
   
   process_weather_data:
     needs: fetch_weather_data
@@ -181,14 +191,17 @@ jobs:
           dvc pull
       - name: Process data
         run: poetry run preprocess_weather_data
-      - name: Commit changes
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
   
   merge_processed_data:
     needs: process_weather_data
@@ -226,14 +239,17 @@ jobs:
           dvc pull
       - name: Process data
         run: poetry run merge_processed_data
-      - name: Commit changes
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
   
   validate_data:
     needs: merge_processed_data
@@ -317,14 +333,17 @@ jobs:
           dvc pull
       - name: Test data stability
         run: poetry run data_stability
-      - name: Commit changes
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
 
   post_data_pipeline_actions:
     needs: [test_stability_data, validate_data]
@@ -364,11 +383,14 @@ jobs:
         run: |
           poetry run update_reference
           poetry run split_train_test
-      - name: Commit changes
+      - name: Add data
         run: |
           dvc add data
-          git add .
-          if git diff-index --quiet HEAD --; then
-            git commit -m 'Github Actions Bot Commit data'
-            git push
-            dvc push -r origin
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Commit changed data
+
+      - name: Push to dvc
+        run: |
+          dvc push
