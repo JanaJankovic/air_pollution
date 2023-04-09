@@ -1,4 +1,3 @@
-import pickle
 import pandas as pd
 from flask import Flask
 from flask_cors import CORS, cross_origin
@@ -11,10 +10,9 @@ app = Flask(__name__)
 MLFLOW_TRACKING_URI = "https://dagshub.com/JanaJankovic/air_pollution.mlflow"
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 client = MlflowClient()
-model_version_info = client.get_latest_versions(
-    "MLPRegressor", stages=["Production"])[0]
-model_uri = model_version_info.source
-model = mlflow.pyfunc.load_model(model_uri)
+run_id = client.get_latest_versions(
+    'MLPRegressor', stages=['production'])[0].run_id
+model = mlflow.pyfunc.load_model(f'runs:/{run_id}/MLPRegressor')
 
 
 def get_forecast():
