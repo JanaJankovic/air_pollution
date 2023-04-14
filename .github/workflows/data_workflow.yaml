@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Setup poetry
         run: |
-          pipx install poetry
+          pip install poetry
           poetry install
 
       - name: Setup Python
