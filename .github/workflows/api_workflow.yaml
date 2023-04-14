@@ -16,8 +16,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install poetry
-          poetry install --no-root
+          pipx install poetry
       - name: Setup Python
         uses: actions/setup-python@v3
         with:
@@ -25,6 +24,8 @@ jobs:
           token: ${{ secrets.TKN }}
           cache: 'poetry'
 
+      - name: Install deps
+        run: poetry install
       - uses: iterative/setup-dvc@v1
 
       - name: Run test
