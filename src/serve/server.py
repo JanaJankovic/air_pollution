@@ -4,6 +4,8 @@ from flask_cors import CORS, cross_origin
 import requests
 from mlflow import MlflowClient
 import mlflow
+import os
+import pymongo
 
 app = Flask(__name__)
 
@@ -13,6 +15,11 @@ client = MlflowClient()
 run_id = client.get_latest_versions(
     'MLPRegressor', stages=['production'])[0].run_id
 model = mlflow.pyfunc.load_model(f'runs:/{run_id}/MLPRegressor')
+
+
+clientdb = pymongo.MongoClient(os.environ['MONGO_URI'])
+db = clientdb.iis
+col = db.prediction
 
 
 def get_forecast():
@@ -45,7 +52,6 @@ def get_forecast():
 @app.route('/forecast', methods=['GET'])
 @cross_origin()
 def forecast():
-
     df = get_forecast()
     df_date = pd.to_datetime(df['date'])
     df_date = df_date.dt.strftime('%Y-%m-%d %H:%M:%S')
@@ -60,6 +66,16 @@ def forecast():
 
     df_dict = df.to_dict()
     json_data = {key: list(df_dict[key].values()) for key in df_dict}
+
+    data = {
+        'temp': df['temp'].tolist(),
+        'hum': df['hum'].tolist(),
+        'percp': df['percp'].tolist(),
+        'wspeed': df['wspeed'].tolist(),
+        'pm10': df['pm10'].tolist(),
+        'date': df['date'].tolist(),
+    }
+    col.insert_one(data)
 
     return json_data
 

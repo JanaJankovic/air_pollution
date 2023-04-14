@@ -21,6 +21,7 @@ data_stability = "src.data.data_stability:main"
 data_validation = "src.data.data_validation:main"
 split_train_test = "src.data.split_train_test:main"
 update_reference = "src.data.update_reference:main"
+monitor = "src.models.monitor:main"
 
 [tool.poetry.dependencies]
 python = "3.10.5"
@@ -36,6 +37,8 @@ flask-cors = "3.0.10"
 requests = "2.28.2"
 dvc = "2.51.0"
 dvc-s3 = "2.21.0"
+bson = "^0.5.10"
+pymongo = "^4.3.3"
 
 
 [tool.poetry.group.dev.dependencies]

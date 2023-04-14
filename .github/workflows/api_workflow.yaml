@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - main
+  schedule:
+    - cron: '0 0 * * *' # run every day at midnight
 
 jobs:
   api_test:
@@ -36,3 +38,49 @@ jobs:
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} 
           poetry run pytest test/test_server_api.py
+
+  monitor:
+    runs-on: ubuntu-latest
+    #if: ${{ github.event.schedule }} == 'cron'
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10.5"
+          token: ${{ secrets.TKN }}
+          cache: 'poetry'
+
+      - name: Install deps
+        run: poetry install
+        
+      - uses: iterative/setup-dvc@v1
+      - name: Setup Dagshub
+        run: |
+          dvc remote modify origin --local auth basic
+          dvc remote modify origin --local user ${{ secrets.DAGSHUB_USERNAME }}
+          dvc remote modify origin --local password ${{ secrets.DAGSHUB_TOKEN }}
+      
+      - name: Setup Github
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "janajankovic@users.noreply.github.com"
+      
+      - name: Pull changes
+        run: |
+          git pull
+          dvc pull
+
+      - name: Run evaluation test
+        run: |
+          export MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
+          export MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          export MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
+          export MONGO_URI=${{ secrets.MONGO_URI}} 
+          poetry run monitor
