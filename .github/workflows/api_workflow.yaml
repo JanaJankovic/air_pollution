@@ -51,6 +51,7 @@ jobs:
           export MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }} 
           export AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}
           export AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          export MONGO_URI=${{ secrets.MONGO_URI }}
           poetry run pytest test/test_server_api.py
 
   api_deploy:

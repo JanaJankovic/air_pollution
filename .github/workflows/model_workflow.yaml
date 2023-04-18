@@ -91,5 +91,5 @@ jobs:
           export MLFLOW_TRACKING_URI=${{ secrets.MLFLOW_TRACKING_URI }}
           export MLFLOW_TRACKING_USERNAME=${{ secrets.MLFLOW_TRACKING_USERNAME }}
           export MLFLOW_TRACKING_PASSWORD=${{ secrets.MLFLOW_TRACKING_PASSWORD }}
-          export MONGO_URI=${{ secrets.MONGO_URI}} 
+          export MONGO_URI=${{secrets.MONGO_URI}} 
           poetry run monitor
