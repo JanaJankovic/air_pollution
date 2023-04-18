@@ -103,7 +103,7 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          file: .src/client/Dockerfile
+          file: ./Dockerfile
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/iis-ng:latest
 
