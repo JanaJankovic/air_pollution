@@ -24,7 +24,9 @@ jobs:
           python-version: "3.10.5"
           cache: 'poetry'
       - name: Install deps
-        run: poetry install  
+        run: |
+          echo ${{ secrets.MONGO_URI }}
+          poetry install  
 
   api_test:
     needs: install_deps
