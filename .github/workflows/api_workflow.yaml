@@ -57,20 +57,26 @@ jobs:
     needs: api_test
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
+      - name: Install dependencies
+        run: |
+          pipx install poetry
+      - name: Setup Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10.5"
+          cache: 'poetry'
+      - name: Export poetry deps to requirements.txt
+        run: poetry export --dev --format=requirements.txt --output=requirements.txt
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Build and push
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -79,23 +85,19 @@ jobs:
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/iis-flask:latest
 
   web_deploy:
-    needs: api_tests
+    needs: api_test
     runs-on: ubuntu-latest
     steps:
-      -
-        name: Checkout
+      - name: Checkout
         uses: actions/checkout@v3
-      -
-        name: Login to Docker Hub
+      - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
-      -
-        name: Build and push
+      - name: Build and push
         uses: docker/build-push-action@v4
         with:
           context: .
