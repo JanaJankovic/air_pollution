@@ -10,8 +10,6 @@ def main():
         root_dir, 'data', 'processed', 'reference_data.csv')
 
     current_data = pd.read_csv(current)
-
-    print('Updating reference data...')
     current_data.to_csv(reference, index=False)
 
 
