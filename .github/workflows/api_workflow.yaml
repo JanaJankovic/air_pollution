@@ -163,6 +163,12 @@ jobs:
         uses: okteto/deploy-preview@latest
         env:
           TKN: ${{ secrets.TKN }}
+          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }} 
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+          MONGO_URI: ${{ secrets.MONGO_URI }} 
         with:
           name: staging-${{ github.event.number }}-janajankovic
           scope: personal
