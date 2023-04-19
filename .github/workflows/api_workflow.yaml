@@ -78,7 +78,7 @@ jobs:
           do
             echo $file
             if [[ $file == src/* ]]; then
-              echo "This modified file is not under the 'src' folder."
+              echo "This modified file is under the 'src' folder."
               echo "::set-output name=run_job::true"
               break
             fi
@@ -118,7 +118,7 @@ jobs:
 
   web_deploy:
     needs: check
-    if: needs.check.outputs.run_job == 'true'
+    #if: needs.check.outputs.run_job == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -175,7 +175,7 @@ jobs:
           timeout: 4000
 
       - name: Build and deploy application container to Okteto Flask Namespace
-        uses: okteto/deploy-stack@master
+        uses: okteto/deploy-stack@main
         with:
           name: okteto-flask-app
           build: true
