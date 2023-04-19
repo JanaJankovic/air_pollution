@@ -16,7 +16,6 @@ run_id = client.get_latest_versions(
     'MLPRegressor', stages=['production'])[0].run_id
 model = mlflow.pyfunc.load_model(f'runs:/{run_id}/MLPRegressor')
 
-
 clientdb = pymongo.MongoClient(os.environ['MONGO_URI'])
 db = clientdb.iis
 col = db.prediction
