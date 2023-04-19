@@ -73,15 +73,14 @@ jobs:
           
           echo "========== check paths of modified files =========="
           git diff --name-only HEAD^ HEAD > files.txt
+          echo "::set-output name=run_job::true"
           while IFS= read -r file
           do
             echo $file
             if [[ $file == src/* ]]; then
               echo "This modified file is not under the 'src' folder."
-              echo "::set-output name=run_job::false"
-              break
-            else
               echo "::set-output name=run_job::true"
+              break
             fi
           done < files.txt
 

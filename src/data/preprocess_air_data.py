@@ -28,7 +28,6 @@ def main():
                 df = pd.concat([df, pd.json_normalize(data)])
 
     df = df[['datum_od', 'pm10']]
-    print('Saving processed data')
     df.to_csv(air_proc, index=False)
 
 
