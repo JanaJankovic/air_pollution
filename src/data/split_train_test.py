@@ -16,10 +16,7 @@ def main():
     test_data = current_data.iloc[:cutoff_index + 1]
     train_data = current_data.iloc[cutoff_index + 1:]
 
-    print('Saving train data...')
     train_data.to_csv(train, index=False)
-
-    print('Saving test data...')
     test_data.to_csv(test, index=False)
 
 
