@@ -1,187 +1,187 @@
-name: API Workflow
-
-on:
-  push:
-    branches:
-      - main
-  schedule:
-    - cron: '0 0 * * *' # run every day at midnight
-
-jobs:
-  install_deps:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'push'
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-      - name: Setup poetry
-        run: |
-          pipx install poetry
-      - name: Setup Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10.5"
-          cache: 'poetry'
-      - name: Install deps
-        run: poetry install  
-
-  api_test:
-    needs: install_deps
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: Install dependencies
-        run: |
-          pipx install poetry
-      - name: Setup Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10.5"
-          token: ${{ secrets.TKN }}
-          cache: 'poetry'
-
-      - name: Run test
-        env: 
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }} 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-          MONGO_URI: ${{ secrets.MONGO_URI }} 
-        run: poetry run pytest test/test_server_api.py
-  
-  check:
-    needs: api_test
-    outputs:
-      run_job: ${{ steps.check_files.outputs.run_job }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      - name: check modified files
-        id: check_files
-        run: |
-          echo "=============== list modified files ==============="
-          git diff --name-only HEAD^ HEAD
-          
-          echo "========== check paths of modified files =========="
-          git diff --name-only HEAD^ HEAD > files.txt
-          echo "::set-output name=run_job::true"
-          while IFS= read -r file
-          do
-            echo $file
-            if [[ $file == src/* ]]; then
-              echo "This modified file is under the 'src' folder."
-              echo "::set-output name=run_job::true"
-              break
-            fi
-          done < files.txt
-
-  api_deploy:
-    needs: check
-    if: needs.check.outputs.run_job == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: |
-          pipx install poetry
-      - name: Setup Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10.5"
-          cache: 'poetry'
-      - name: Export poetry deps to requirements.txt
-        run: poetry export -f requirements.txt --without-hashes > requirements.txt
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/iis-flask:latest
-
-  web_deploy:
-    needs: check
-    #if: needs.check.outputs.run_job == 'true'
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          context: src/client
-          file: src/client/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/iis-ng:latest
-
-
-  okteto_deploy:
-    needs: [api_deploy, web_deploy]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: |
-          pipx install poetry
-      - name: Setup Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: "3.10.5"
-          cache: 'poetry'
-
-      - name: Set context to Okteto Cloud
-        uses: okteto/context@latest
-        with:
-          token: ${{ secrets.OKTETO_TOKEN }}
-
-      - name: Deploy your preview environment
-        uses: okteto/deploy-preview@latest
-        env:
-          TKN: ${{ secrets.TKN }}
-          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
-          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
-          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }} 
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
-          MONGO_URI: ${{ secrets.MONGO_URI }} 
-        with:
-          name: staging-${{ github.event.number }}-janajankovic
-          scope: personal
-          timeout: 15m
-
-      - uses: nev7n/wait_for_response@v1
-        with:
-          url: https://api-staging-${{ github.event.number }}-janajankovic.cloud.okteto.net
-          responseCode: 200
-          timeout: 4000
-
-      - name: Build and deploy application container to Okteto Flask Namespace
-        uses: okteto/deploy-stack@main
-        with:
-          name: okteto-flask-app
-          build: true
+#name: API Workflow
+#
+#on:
+#  push:
+#    branches:
+#      - main
+#  schedule:
+#    - cron: '0 0 * * *' # run every day at midnight
+#
+#jobs:
+#  install_deps:
+#    runs-on: ubuntu-latest
+#    if: github.event_name == 'push'
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#      - name: Setup poetry
+#        run: |
+#          pipx install poetry
+#      - name: Setup Python
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: "3.10.5"
+#          cache: 'poetry'
+#      - name: Install deps
+#        run: poetry install  
+#
+#  api_test:
+#    needs: install_deps
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v3
+#        with:
+#          fetch-depth: 0
+#
+#      - name: Install dependencies
+#        run: |
+#          pipx install poetry
+#      - name: Setup Python
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: "3.10.5"
+#          token: ${{ secrets.TKN }}
+#          cache: 'poetry'
+#
+#      - name: Run test
+#        env: 
+#          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+#          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+#          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }} 
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+#          MONGO_URI: ${{ secrets.MONGO_URI }} 
+#        run: poetry run pytest test/test_server_api.py
+#  
+#  check:
+#    needs: api_test
+#    outputs:
+#      run_job: ${{ steps.check_files.outputs.run_job }}
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v2
+#        with:
+#          fetch-depth: 2
+#
+#      - name: check modified files
+#        id: check_files
+#        run: |
+#          echo "=============== list modified files ==============="
+#          git diff --name-only HEAD^ HEAD
+#          
+#          echo "========== check paths of modified files =========="
+#          git diff --name-only HEAD^ HEAD > files.txt
+#          echo "::set-output name=run_job::true"
+#          while IFS= read -r file
+#          do
+#            echo $file
+#            if [[ $file == src/* ]]; then
+#              echo "This modified file is under the 'src' folder."
+#              echo "::set-output name=run_job::true"
+#              break
+#            fi
+#          done < files.txt
+#
+#  api_deploy:
+#    needs: check
+#    if: needs.check.outputs.run_job == 'true'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Install dependencies
+#        run: |
+#          pipx install poetry
+#      - name: Setup Python
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: "3.10.5"
+#          cache: 'poetry'
+#      - name: Export poetry deps to requirements.txt
+#        run: poetry export -f requirements.txt --without-hashes > requirements.txt
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
+#      - name: Build and push
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: .
+#          file: ./Dockerfile
+#          push: true
+#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/iis-flask:latest
+#
+#  web_deploy:
+#    needs: check
+#    #if: needs.check.outputs.run_job == 'true'
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Login to Docker Hub
+#        uses: docker/login-action@v2
+#        with:
+#          username: ${{ secrets.DOCKERHUB_USERNAME }}
+#          password: ${{ secrets.DOCKERHUB_TOKEN }}
+#      - name: Set up Docker Buildx
+#        uses: docker/setup-buildx-action@v2
+#      - name: Build and push
+#        uses: docker/build-push-action@v4
+#        with:
+#          context: src/client
+#          file: src/client/Dockerfile
+#          push: true
+#          tags: ${{ secrets.DOCKERHUB_USERNAME }}/iis-ng:latest
+#
+#
+#  okteto_deploy:
+#    needs: [api_deploy, web_deploy]
+#    runs-on: ubuntu-latest
+#    steps:
+#      - name: Checkout
+#        uses: actions/checkout@v3
+#      - name: Install dependencies
+#        run: |
+#          pipx install poetry
+#      - name: Setup Python
+#        uses: actions/setup-python@v3
+#        with:
+#          python-version: "3.10.5"
+#          cache: 'poetry'
+#
+#      - name: Set context to Okteto Cloud
+#        uses: okteto/context@latest
+#        with:
+#          token: ${{ secrets.OKTETO_TOKEN }}
+#
+#      - name: Deploy your preview environment
+#        uses: okteto/deploy-preview@latest
+#        env:
+#          TKN: ${{ secrets.TKN }}
+#          MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+#          MLFLOW_TRACKING_USERNAME: ${{ secrets.MLFLOW_TRACKING_USERNAME }}
+#          MLFLOW_TRACKING_PASSWORD: ${{ secrets.MLFLOW_TRACKING_PASSWORD }} 
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+#          MONGO_URI: ${{ secrets.MONGO_URI }} 
+#        with:
+#          name: staging-${{ github.event.number }}-janajankovic
+#          scope: personal
+#          timeout: 15m
+#
+#      - uses: nev7n/wait_for_response@v1
+#        with:
+#          url: https://api-staging-${{ github.event.number }}-janajankovic.cloud.okteto.net
+#          responseCode: 200
+#          timeout: 4000
+#
+#      - name: Build and deploy application container to Okteto Flask Namespace
+#        uses: okteto/deploy-stack@main
+#        with:
+#          name: okteto-flask-app
+#          build: true
